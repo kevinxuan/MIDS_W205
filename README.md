@@ -146,15 +146,15 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.  These questions MUST be different than any of the questions and queries you ran above.
 
-- Question 1: 
+- Question 1: Among all trips, which station appears the most in start station and which station appears the most in end station? 
+  * Answer:  
+  * SQL query:
+
+- Question 2: Among all trips, Which zip code appears the most during 2014?
   * Answer:
   * SQL query:
 
-- Question 2:
-  * Answer:
-  * SQL query:
-
-- Question 3:
+- Question 3: What's the longest duration for a trip?
   * Answer:
   * SQL query:
 
