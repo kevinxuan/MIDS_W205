@@ -128,19 +128,19 @@ Public Datasets: Bring up your Google BigQuery console, open the menu for the pu
 Paste your SQL query and answer the question in a sentence.  Be sure you properly format your queries and results using markdown. 
 
 - What's the size of this dataset? (i.e., how many trips)
-**Answer:** 
-select count(distinct(trip_id)) FROM `bigquery-public-data`.san_francisco.bikeshare_trips;
+-- **Answer:** 
+--- select count(distinct(trip_id)) FROM `bigquery-public-data`.san_francisco.bikeshare_trips;
 There are 983,648 trips in total.
 
 - What is the earliest start date and time and latest end date and time for a trip?
-**Answer:** 
-select start_date FROM `bigquery-public-data`.san_francisco.bikeshare_trips order by start_date limit 1;
-select end_date FROM `bigquery-public-data`.san_francisco.bikeshare_trips order by end_date DESC limit 1; 
-The earliest start date and time for a trip is 2013-08-29 09:08:00 UTC.
-The latest end date and time for a trip is 2016-08-31 23:48:00 UTC.
+-- **Answer:** 
+--- select start_date FROM `bigquery-public-data`.san_francisco.bikeshare_trips order by start_date limit 1;
+--- select end_date FROM `bigquery-public-data`.san_francisco.bikeshare_trips order by end_date DESC limit 1; 
+--- The earliest start date and time for a trip is 2013-08-29 09:08:00 UTC.
+--- The latest end date and time for a trip is 2016-08-31 23:48:00 UTC.
 
 - How many bikes are there?
-**Answer:** 
+-- **Answer:** 
 select count(distinct(bike_number)) FROM `bigquery-public-data`.san_francisco.bikeshare_trips;
 There are 700 bikes.
 
