@@ -132,8 +132,8 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   * SQL query:  
   ```sql
   select count(distinct(trip_id))
-  from `bigquery-public-data`.san_francisco.bikeshare_trips;```
-
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 - What is the earliest start date and time and latest end date and time for a trip?
   * Answer: The earliest start date and time for a trip is 2013-08-29 09:08:00 UTC, and the latest end date and time for a trip is 2016-08-31 23:48:00 UTC.
@@ -142,21 +142,21 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   select start_date
   from `bigquery-public-data`.san_francisco.bikeshare_trips
   order by start_date
-  limit 1;```  
+  limit 1;
+  ```  
   ```sql
   select end_date
   from `bigquery-public-data`.san_francisco.bikeshare_trips
   order by end_date DESC
   limit 1;```
 
-
 - How many bikes are there?
   * Answer: There are 700 bikes.
   * SQL query:  
   ```sql
   select count(distinct(bike_number))
-  from `bigquery-public-data`.san_francisco.bikeshare_trips;```
-
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 
 ### Questions of your own
@@ -170,7 +170,8 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   from `bigquery-public-data`.san_francisco.bikeshare_trips
   group by start_station_name
   order by count(bike_number) DESC
-  limit 1; ```  
+  limit 1;
+  ```  
   ```select end_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by end_station_name order by count(bike_number) DESC limit 1;```
 
 - Question 2:  What's the longest duration for a trip (round to the closest number of days)?
@@ -178,7 +179,8 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   * SQL query:  
   ```sql
   select round(max(duration_sec)/60/60/24)
-  from `bigquery-public-data`.san_francisco.bikeshare_trips;```
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 - Question 3: Which zip code appears the most among all trips with duration between 2000 and 3000 seconds? (excluding null)
   * Answer: Zip code 94107 appears the most among all trips with duration between 2000 and 3000 seconds.
@@ -189,7 +191,8 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   where duration_sec <=3000 and duration_sec >= 2000
   group by zip_code
   order by count(zip_code) DESC
-  limit 2;```
+  limit 2;
+  ```
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
