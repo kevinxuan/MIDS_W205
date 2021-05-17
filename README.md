@@ -236,20 +236,20 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
    queries and results here, using properly formatted markdown):
 
   * What's the size of this dataset? (i.e., how many trips)
-  * Query:
-  ```
-  bq query --use_legacy_sql=false '
-      select count(distinct(trip_id))
-      from `bigquery-public-data`.san_francisco.bikeshare_trips'
-  ```
-  * Result:  
-  ```
-  +--------+
-  |  f0_   |
-  +--------+
-  | 983648 |
-  +--------+
-  ```
+    * Query:
+      ```
+      bq query --use_legacy_sql=false '
+          select count(distinct(trip_id))
+          from `bigquery-public-data`.san_francisco.bikeshare_trips'
+      ```
+    * Result:  
+      ```
+      +--------+
+      |  f0_   |
+      +--------+
+      | 983648 |
+      +--------+
+      ```
 
   * What is the earliest start time and latest end time for a trip?
 
