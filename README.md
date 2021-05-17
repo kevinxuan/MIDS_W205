@@ -237,27 +237,84 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 
   * What's the size of this dataset? (i.e., how many trips)
     * Query:
-      ```
+    ```
       bq query --use_legacy_sql=false '
-          select count(distinct(trip_id))
-          from `bigquery-public-data`.san_francisco.bikeshare_trips'
-      ```
+        select count(distinct(trip_id))
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
+    ```
     * Result:  
-      ```
-      +--------+
-      |  f0_   |
-      +--------+
-      | 983648 |
-      +--------+
-      ```
+    ```
+    +--------+
+    |  f0_   |
+    +--------+
+    | 983648 |
+    +--------+
+    ```
 
   * What is the earliest start time and latest end time for a trip?
+    * Query:
+    ```
+      bq query --use_legacy_sql=false '
+        select start_date
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        order by start_date
+        limit 1'
+    ```
+    ```
+      bq query --use_legacy_sql=false '
+        select end_date
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        order by end_date DESC
+        limit 1'
+    ```
+    * Result:
+    ```
+    +---------------------+
+    |     start_date      |
+    +---------------------+
+    | 2013-08-29 09:08:00 |
+    +---------------------+
+    ```
+    ```
+    +---------------------+
+    |      end_date       |
+    +---------------------+
+    | 2016-08-31 23:48:00 |
+    +---------------------+
+    ```
 
   * How many bikes are there?
-
+    * Query:
+    ```
+      bq query --use_legacy_sql=false '
+        select count(distinct(bike_number))
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
+    ```
+    * Result:
+    ```
+    +-----+
+    | f0_ |
+    +-----+
+    | 700 |
+    +-----+
+    ```
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
   * How many trips are in the morning vs in the afternoon?
+    * Query:  
+    ```
+      bq query --use_legacy_sql=false '
+        select count(trip_id) 
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        where extract(hour from start_date) >=0 and extract(hour from start_date) <12 and duration_sec < 12*60*60'
+    ```  
+    ```
+    bq query --use_legacy_sql=false '
+        select count(trip_id) 
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        where extract(hour from end_date) >= 12 and extract(hour from end_date) < 24 and duration_sec < 12*60*60'
+    ```
+    * Answer: There are 412,010 trips in the morning and 582,821 trips in the afternoon.
 
 
 ### Project Questions
