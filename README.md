@@ -148,15 +148,19 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
 - Question 1: Among all trips, which station appears the most in start station and which station appears the most in end station? 
   * Answer: For both start station and end station, San Francisco Caltrain (Townsend at 4th) appears the most.
-  * SQL query: select start_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by start_station_name order by count(bike_number) DESC limit 1; select end_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by end_station_name order by count(bike_number) DESC limit 1;
+  * SQL query: 
+  ```select start_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by start_station_name order by count(bike_number) DESC limit 1; ```
+  ```select end_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by end_station_name order by count(bike_number) DESC limit 1;```
 
 - Question 2:  What's the longest duration for a trip (round to the closest number of days)?
   * Answer: The longest duration for a trip is 200 days. This seems to be an unreasonable value for a trip to last, so most likely there may be some errors in the trip recording.
-  * SQL query: select round(max(duration_sec)/60/60/24) from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  * SQL query: 
+  ```select round(max(duration_sec)/60/60/24) from `bigquery-public-data`.san_francisco.bikeshare_trips;```
 
 - Question 3: Which zip code appears the most among all trips with duration between 2000 and 3000 seconds? (excluding null)
   * Answer: Zip code 94107 appears the most among all trips with duration between 2000 and 3000 seconds.
-  * SQL query: select zip_code, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips where duration_sec <=3000 and duration_sec >= 2000 group by zip_code order by count(zip_code) DESC limit 2;
+  * SQL query: 
+  ```select zip_code, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips where duration_sec <=3000 and duration_sec >= 2000 group by zip_code order by count(zip_code) DESC limit 2;```
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
