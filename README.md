@@ -139,16 +139,9 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   * Answer: The earliest start date and time for a trip is 2013-08-29 09:08:00 UTC, and the latest end date and time for a trip is 2016-08-31 23:48:00 UTC.
   * SQL query:  
   ```sql
-  select start_date
-  from `bigquery-public-data`.san_francisco.bikeshare_trips
-  order by start_date
-  limit 1;
-  ```  
-  ```sql
-  select end_date
-  from `bigquery-public-data`.san_francisco.bikeshare_trips
-  order by end_date DESC
-  limit 1;```
+  select min(start_date), max(end_date) 
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 - How many bikes are there?
   * Answer: There are 700 bikes.
@@ -175,7 +168,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   ```select end_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by end_station_name order by count(bike_number) DESC limit 1;```
 
 - Question 2:  What's the longest duration for a trip (round to the closest number of days)?
-  * Answer: The longest duration for a trip is 200 days. This seems to be an unreasonable value for a trip to last, so most likely there may be some errors in the trip recording.
+  * Answer: The longest duration for a trip is 200 days. This seems to be an unreasonable value for a trip to last, so most likely there may be some errors in the trip recording system or that the bike has been stolen and not returned.
   * SQL query:  
   ```sql
   select round(max(duration_sec)/60/60/24)
@@ -239,64 +232,48 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
     * Query:
     ```
       bq query --use_legacy_sql=false '
-        select count(distinct(trip_id))
+        select count(distinct(trip_id)) as total_trips
         from `bigquery-public-data`.san_francisco.bikeshare_trips'
     ```
     * Result:  
     ```
-    +--------+
-    |  f0_   |
-    +--------+
-    | 983648 |
-    +--------+
+    +-------------+
+    | total_trips |
+    +-------------+
+    |      983648 |
+    +-------------+
     ```
 
   * What is the earliest start time and latest end time for a trip?
     * Query:
     ```
       bq query --use_legacy_sql=false '
-        select start_date
-        from `bigquery-public-data`.san_francisco.bikeshare_trips
-        order by start_date
-        limit 1'
-    ```
-    ```
-      bq query --use_legacy_sql=false '
-        select end_date
-        from `bigquery-public-data`.san_francisco.bikeshare_trips
-        order by end_date DESC
-        limit 1'
+        select min(start_date) as earliest_date, max(end_date) as latest_date
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
     ```
     * Result:
     ```
-    +---------------------+
-    |     start_date      |
-    +---------------------+
-    | 2013-08-29 09:08:00 |
-    +---------------------+
-    ```
-    ```
-    +---------------------+
-    |      end_date       |
-    +---------------------+
-    | 2016-08-31 23:48:00 |
-    +---------------------+
+    +---------------------+---------------------+
+    |    earliest_date    |     latest_date     |
+    +---------------------+---------------------+
+    | 2013-08-29 09:08:00 | 2016-08-31 23:48:00 |
+    +---------------------+---------------------+
     ```
 
   * How many bikes are there?
     * Query:
     ```
       bq query --use_legacy_sql=false '
-        select count(distinct(bike_number))
+        select count(distinct(bike_number)) as number_of_bikes
         from `bigquery-public-data`.san_francisco.bikeshare_trips'
     ```
     * Result:
     ```
-    +-----+
-    | f0_ |
-    +-----+
-    | 700 |
-    +-----+
+    +-----------------+
+    | number_of_bikes |
+    +-----------------+
+    |             700 |
+    +-----------------+
     ```
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
@@ -321,13 +298,27 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: 
+- Question 1: What's the average commute time for trips fewer than 2 hours? 
 
-- Question 2: 
+- Question 2: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
 
-- Question 3: 
+- Question 3: What are some stations with high availbilty of bikes and some stations with low availbility of bikes during midday of the weekdays?
 
-- Question 4: 
+- Question 4: What percentage of the people using bikes are customers? subscribers?
+
+- Question 5: What's the average commute time for customers and subscribers respectively?
+
+- Question 6: For subscribers, which start station and end station appear the most?
+
+- Question 7: Which landmark appears the most among all the trips?
+
+- Question 8: What's the average availibility by station?
+
+- Question 9: What's the average straight line distance travelled for subscribers respectively?
+
+- Question 10: What's the average straight line distance travelled for all subscribers from the popular stations?
+
+- Question 11: 
 
 - ...
 
@@ -339,19 +330,19 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: 
+- Question 1: Which landmark appears the most among all the trips?
   * Answer:
   * SQL query:
 
-- Question 2:
+- Question 2: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
   * Answer:
   * SQL query:
 
-- Question 3:
+- Question 3: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
   * Answer:
   * SQL query:
   
-- Question 4:
+- Question 4: What's the average straight line distance travelled for subscribers respectively?
   * Answer:
   * SQL query:
   
