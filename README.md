@@ -300,7 +300,7 @@ below, add as many questions as you need).
 
 - Question 1: What's the average commute time for trips fewer than 2 hours? 
 
-- Question 2: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
+- Question 2: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
 
 - Question 3: What are some stations with high availbilty of bikes and some stations with low availbility of bikes during midday of the weekdays?
 
@@ -318,7 +318,7 @@ below, add as many questions as you need).
 
 - Question 10: What's the average straight line distance travelled for all subscribers from the popular stations?
 
-- Question 11: 
+- Question 11: For rides with start date and end date happening on the same day, Whch day of week has the most number of rides?
 
 - ...
 
@@ -330,21 +330,72 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: Which landmark appears the most among all the trips?
-  * Answer:
+- Question 1: Which landmark appears the most among all the trips? 
+  * Answer: For both start and end station, San Francisco has the most number of trips occured, covering 90.6% of the total nubmer of trips. This is reasonable, as San Francisco is more densely populated compared to other cities and that in densely populated cities riding bikes are more convenient than driving cars.
   * SQL query:
+  ```SQL
+      select bs.landmark as city, count(bt.trip_id) as count_trip
+      from `bigquery-public-data`.san_francisco.bikeshare_trips bt inner join 
+      `bigquery-public-data`.san_francisco.bikeshare_stations bs
+      on bt.start_station_id = bs.station_id
+      group by bs.landmark
+      order by count_trip DESC;
+  ```
+  ```SQL
+      select bs.landmark as city, count(bt.trip_id) as count_trip
+      from `bigquery-public-data`.san_francisco.bikeshare_trips bt inner join 
+      `bigquery-public-data`.san_francisco.bikeshare_stations bs
+      on bt.end_station_id = bs.station_id
+      group by bs.landmark
+      order by count_trip DESC;
+  ```
 
-- Question 2: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
-  * Answer:
+- Question 2: For rides with start date and end date happening on the same day, which days of week has the most number of rides?
+  * Answer: Tuesday is the day of week which has the most number of rides. Number of rides on week days are greater than 155,900 per day, while number of rides for weekends are below 60,000 per day. From this, we can see that most customers use bike as their transportation to commute to work.
   * SQL query:
+  ```sql
+  select dayofweek, count_of_trips 
+    from (SELECT extract(dayofweek from start_date) as dayofweek, count(trip_id) as count_of_trips
+    from `bigquery-public-data`.san_francisco.bikeshare_trips
+    where extract(day from start_date) = extract(day from end_date) and
+    extract(month from start_date) = extract(month from end_date) and
+    extract(year from start_date) = extract(year from end_date)
+    group by extract(dayofweek from start_date)) as d
+    order by count_of_trips DESC;
+    ```
 
-- Question 3: What percentage of the trips are commute, i.e. start station not equal to end station? What percentage of the trips have same start and end station?
-  * Answer:
+- Question 3: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
+  * Answer: 96.56% of the same day trips have end station different from start station. This even further shows that people use bikes as their commute transportation.
   * SQL query:
+  ```sql
+  select count(trip_id) /(select count(trip_id) as count_trips
+    from `bigquery-public-data`.san_francisco.bikeshare_trips)
+    from
+    `bigquery-public-data`.san_francisco.bikeshare_trips
+    where extract(day from start_date) = extract(day from end_date) and
+    extract(month from start_date) = extract(month from end_date) and
+    extract(year from start_date) = extract(year from end_date) and
+    start_station_id != end_station_id;
+    ```
   
-- Question 4: What's the average straight line distance travelled for subscribers respectively?
-  * Answer:
+- Question 4: What's the average straight line distance travelled for all riders? Subscribers?
+  * Answer: The average straight line distance for all riders is 1.53km. The average straight line for subscribers is around 1.52km.
   * SQL query:
+  ```sql
+  select avg(sqrt(pow((s_lat - e_lat)*110.574,2) + pow((s_lon - e_lon)*111.32,2))) as distance
+    from
+    (select bs.latitude as s_lat, bs.longitude as s_lon,
+    bs2.latitude as e_lat, bs2.longitude as e_lon
+    from `bigquery-public-data`.san_francisco.bikeshare_trips bt
+    inner join `bigquery-public-data`.san_francisco.bikeshare_stations bs
+    on bt.start_station_id = bs.station_id
+    inner join `bigquery-public-data`.san_francisco.bikeshare_stations bs2
+    on bt.end_station_id = bs2.station_id
+    where extract(day from start_date) = extract(day from end_date) and
+    extract(month from start_date) = extract(month from end_date) and
+    extract(year from start_date) = extract(year from end_date) and
+    start_station_id != end_station_id) d;
+  ```
   
 - ...
 
