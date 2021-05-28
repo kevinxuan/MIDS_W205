@@ -298,7 +298,7 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: What's the average commute time for trips fewer than 2 hours? 
+- Question 1: What's the average commute time for trips greater than 5 minutes and fewer than 2 hours? (Commute trips should be in this range)
 
 - Question 2: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
 
@@ -320,9 +320,8 @@ below, add as many questions as you need).
 
 - Question 11: For rides with start date and end date happening on the same day, Whch day of week has the most number of rides?
 
-- ...
+- Question 12: How many trips are in the range from 6 to 9am and from 5-8pm and that the start and end station are different?
 
-- Question n: 
 
 ### Answers
 
@@ -378,8 +377,8 @@ answers below.
     start_station_id != end_station_id;
     ```
   
-- Question 4: What's the average straight line distance travelled for all riders? Subscribers?
-  * Answer: The average straight line distance for all riders is 1.53km. The average straight line for subscribers is around 1.52km.
+- Question 4: What's the average and max straight line distance travelled for all riders? 
+  * Answer: The average straight line distance for all riders is 1.53km. The maximum straight line distance is 76.18km.
   * SQL query:
   ```sql
   select avg(sqrt(pow((s_lat - e_lat)*110.574,2) + pow((s_lon - e_lon)*111.32,2))) as distance
@@ -397,11 +396,7 @@ answers below.
     start_station_id != end_station_id) d;
   ```
   
-- ...
 
-- Question n:
-  * Answer:
-  * SQL query:
 
 ---
 
