@@ -329,8 +329,19 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: Which landmark appears the most among all the trips? 
-  * Answer: For both start and end station, San Francisco has the most number of trips occured, covering 90.6% of the total nubmer of trips. This is reasonable, as San Francisco is more densely populated compared to other cities and that in densely populated cities riding bikes are more convenient than driving cars.
+- Question 1: What percentage of the people using bikes are customers? subscribers?
+  * Answer: 84% of the people using bikes are subscibers, and 16% of the people using bikes are customers. Hence if we want to perform marketing, we should target at subscribers. However, 16% is also not a small number, so it's better to create personalized offers for these two target groups. 
+  * SQL query:
+  ```SQL
+  select bt.subscriber_type, round(count(bt.trip_id)/(select count(trip_id) as trip_count from `bigquery-public-data`.san_francisco.bikeshare_trips),2), 
+    from `bigquery-public-data`.san_francisco.bikeshare_trips bt
+    group by bt.subscriber_type;
+```
+
+
+
+- Question 2: Which landmark appears the most among all the trips? 
+  * Answer: For both start and end station, San Francisco has the most number of trips occured, covering 90.6% of the total number of trips. This is reasonable, as San Francisco is more densely populated compared to other cities and that in densely populated cities riding bikes are more convenient than driving cars.
   * SQL query:
   ```SQL
       select bs.landmark as city, count(bt.trip_id) as count_trip
@@ -349,19 +360,6 @@ answers below.
       order by count_trip DESC;
   ```
 
-- Question 2: For rides with start date and end date happening on the same day, which days of week has the most number of rides?
-  * Answer: Tuesday is the day of week which has the most number of rides. Number of rides on week days are greater than 155,900 per day, while number of rides for weekends are below 60,000 per day. From this, we can see that most customers use bike as their transportation to commute to work.
-  * SQL query:
-  ```sql
-  select dayofweek, count_of_trips 
-    from (SELECT extract(dayofweek from start_date) as dayofweek, count(trip_id) as count_of_trips
-    from `bigquery-public-data`.san_francisco.bikeshare_trips
-    where extract(day from start_date) = extract(day from end_date) and
-    extract(month from start_date) = extract(month from end_date) and
-    extract(year from start_date) = extract(year from end_date)
-    group by extract(dayofweek from start_date)) as d
-    order by count_of_trips DESC;
-    ```
 
 - Question 3: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
   * Answer: 96.56% of the same day trips have end station different from start station. This even further shows that people use bikes as their commute transportation.
