@@ -283,15 +283,15 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
       bq query --use_legacy_sql=false '
         select count(trip_id) 
         from `bigquery-public-data`.san_francisco.bikeshare_trips
-        where extract(hour from start_date) >=0 and extract(hour from start_date) <12 and duration_sec < 12*60*60'
+        where extract(hour from start_date) >=6 and extract(hour from end_date) <12 and duration_sec <= 6*60*60'
     ```  
     ```
     bq query --use_legacy_sql=false '
         select count(trip_id) 
         from `bigquery-public-data`.san_francisco.bikeshare_trips
-        where extract(hour from end_date) >= 12 and extract(hour from end_date) < 24 and duration_sec < 12*60*60'
+        where extract(hour from start_date) >= 12 and extract(hour from end_date) < 18 and duration_sec <= 6*60*60'
     ```
-    * Answer: There are 412,010 trips in the morning and 582,821 trips in the afternoon.
+    * Answer: There are 386,842 trips in the morning and 367,098 trips in the afternoon.
 
 
 ### Project Questions
