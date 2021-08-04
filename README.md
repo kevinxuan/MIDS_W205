@@ -127,27 +127,65 @@ Public Datasets: Bring up your Google BigQuery console, open the menu for the pu
 
 Paste your SQL query and answer the question in a sentence.  Be sure you properly format your queries and results using markdown. 
 
-- What's the size of this dataset? (i.e., how many trips)
+- What's the size of this dataset? (i.e., how many trips)  
+  * Answer: There are 983,648 trips in total.
+  * SQL query:  
+  ```sql
+  select count(distinct(trip_id))
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 - What is the earliest start date and time and latest end date and time for a trip?
+  * Answer: The earliest start date and time for a trip is 2013-08-29 09:08:00 UTC, and the latest end date and time for a trip is 2016-08-31 23:48:00 UTC.
+  * SQL query:  
+  ```sql
+  select min(start_date), max(end_date) 
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 - How many bikes are there?
+  * Answer: There are 700 bikes.
+  * SQL query:  
+  ```sql
+  select count(distinct(bike_number))
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
 
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.  These questions MUST be different than any of the questions and queries you ran above.
 
-- Question 1: 
-  * Answer:
-  * SQL query:
+- Question 1: Among all trips, which station appears the most in start station and which station appears the most in end station? 
+  * Answer: For both start station and end station, San Francisco Caltrain (Townsend at 4th) appears the most.
+  * SQL query:  
+  ```sql
+  select start_station_name, count(bike_number)
+  from `bigquery-public-data`.san_francisco.bikeshare_trips
+  group by start_station_name
+  order by count(bike_number) DESC
+  limit 1;
+  ```  
+  ```select end_station_name, count(bike_number) from `bigquery-public-data`.san_francisco.bikeshare_trips group by end_station_name order by count(bike_number) DESC limit 1;```
 
-- Question 2:
-  * Answer:
-  * SQL query:
+- Question 2:  What's the longest duration for a trip (round to the closest number of days)?
+  * Answer: The longest duration for a trip is 200 days. This seems to be an unreasonable value for a trip to last, so most likely there may be some errors in the trip recording system or that the bike has been stolen and not returned.
+  * SQL query:  
+  ```sql
+  select round(max(duration_sec)/60/60/24)
+  from `bigquery-public-data`.san_francisco.bikeshare_trips;
+  ```
 
-- Question 3:
-  * Answer:
-  * SQL query:
+- Question 3: Which zip code appears the most among all trips with duration between 2000 and 3000 seconds? (excluding null)
+  * Answer: Zip code 94107 appears the most among all trips with duration between 2000 and 3000 seconds.
+  * SQL query:  
+  ```sql
+  select zip_code, count(bike_number)
+  from `bigquery-public-data`.san_francisco.bikeshare_trips
+  where duration_sec <=3000 and duration_sec >= 2000
+  group by zip_code
+  order by count(zip_code) DESC
+  limit 2;
+  ```
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
@@ -191,31 +229,99 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
    queries and results here, using properly formatted markdown):
 
   * What's the size of this dataset? (i.e., how many trips)
+    * Query:
+    ```
+      bq query --use_legacy_sql=false '
+        select count(distinct(trip_id)) as total_trips
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
+    ```
+    * Result:  
+    ```
+    +-------------+
+    | total_trips |
+    +-------------+
+    |      983648 |
+    +-------------+
+    ```
 
   * What is the earliest start time and latest end time for a trip?
+    * Query:
+    ```
+      bq query --use_legacy_sql=false '
+        select min(start_date) as earliest_date, max(end_date) as latest_date
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
+    ```
+    * Result:
+    ```
+    +---------------------+---------------------+
+    |    earliest_date    |     latest_date     |
+    +---------------------+---------------------+
+    | 2013-08-29 09:08:00 | 2016-08-31 23:48:00 |
+    +---------------------+---------------------+
+    ```
 
   * How many bikes are there?
-
+    * Query:
+    ```
+      bq query --use_legacy_sql=false '
+        select count(distinct(bike_number)) as number_of_bikes
+        from `bigquery-public-data`.san_francisco.bikeshare_trips'
+    ```
+    * Result:
+    ```
+    +-----------------+
+    | number_of_bikes |
+    +-----------------+
+    |             700 |
+    +-----------------+
+    ```
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
   * How many trips are in the morning vs in the afternoon?
+    * Query:  
+    ```
+      bq query --use_legacy_sql=false '
+        select count(trip_id) 
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        where extract(hour from start_date) >=6 and extract(hour from end_date) <12 and duration_sec <= 6*60*60'
+    ```  
+    ```
+    bq query --use_legacy_sql=false '
+        select count(trip_id) 
+        from `bigquery-public-data`.san_francisco.bikeshare_trips
+        where extract(hour from start_date) >= 12 and extract(hour from end_date) < 18 and duration_sec <= 6*60*60'
+    ```
+    * Answer: There are 386,842 trips in the morning and 367,098 trips in the afternoon.
 
 
 ### Project Questions
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: 
+- Question 1: What's the average commute time for trips greater than 5 minutes and fewer than 2 hours? (Commute trips should be in this range)
 
-- Question 2: 
+- Question 2: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
 
-- Question 3: 
+- Question 3: What are some stations with high availbilty of bikes and some stations with low availbility of bikes during midday of the weekdays?
 
-- Question 4: 
+- Question 4: What percentage of the people using bikes are customers? subscribers?
 
-- ...
+- Question 5: What's the average commute time for customers and subscribers respectively?
 
-- Question n: 
+- Question 6: For subscribers, which start station and end station appear the most?
+
+- Question 7: Which landmark appears the most among all the trips?
+
+- Question 8: What's the average availibility by station?
+
+- Question 9: What's the average straight line distance travelled for subscribers respectively?
+
+- Question 10: What's the average straight line distance travelled for all subscribers from the popular stations?
+
+- Question 11: For rides with start date and end date happening on the same day, Whch day of week has the most number of rides?
+
+- Question 12: How many trips are in the range from 6 to 9am and from 5-8pm and that the start and end station are different?
+
 
 ### Answers
 
@@ -223,27 +329,72 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: 
-  * Answer:
+- Question 1: What percentage of the people using bikes are customers? subscribers?
+  * Answer: 84% of the people using bikes are subscibers, and 16% of the people using bikes are customers. Hence if we want to perform marketing, we should target at subscribers. However, 16% is also not a small number, so it's better to create personalized offers for these two target groups. 
   * SQL query:
+  ```SQL
+  select bt.subscriber_type, round(count(bt.trip_id)/(select count(trip_id) as trip_count from `bigquery-public-data`.san_francisco.bikeshare_trips),2), 
+    from `bigquery-public-data`.san_francisco.bikeshare_trips bt
+    group by bt.subscriber_type;
+```
 
-- Question 2:
-  * Answer:
-  * SQL query:
 
-- Question 3:
-  * Answer:
+
+- Question 2: Which landmark appears the most among all the trips? 
+  * Answer: For both start and end station, San Francisco has the most number of trips occured, covering 90.6% of the total number of trips. This is reasonable, as San Francisco is more densely populated compared to other cities and that in densely populated cities riding bikes are more convenient than driving cars.
   * SQL query:
+  ```SQL
+      select bs.landmark as city, count(bt.trip_id) as count_trip
+      from `bigquery-public-data`.san_francisco.bikeshare_trips bt inner join 
+      `bigquery-public-data`.san_francisco.bikeshare_stations bs
+      on bt.start_station_id = bs.station_id
+      group by bs.landmark
+      order by count_trip DESC;
+  ```
+  ```SQL
+      select bs.landmark as city, count(bt.trip_id) as count_trip
+      from `bigquery-public-data`.san_francisco.bikeshare_trips bt inner join 
+      `bigquery-public-data`.san_francisco.bikeshare_stations bs
+      on bt.end_station_id = bs.station_id
+      group by bs.landmark
+      order by count_trip DESC;
+  ```
+
+
+- Question 3: What percentage of the same day trips are commute, i.e. start station not equal to end station? 
+  * Answer: 96.56% of the same day trips have end station different from start station. This even further shows that people use bikes as their commute transportation.
+  * SQL query:
+  ```sql
+  select count(trip_id) /(select count(trip_id) as count_trips
+    from `bigquery-public-data`.san_francisco.bikeshare_trips)
+    from
+    `bigquery-public-data`.san_francisco.bikeshare_trips
+    where extract(day from start_date) = extract(day from end_date) and
+    extract(month from start_date) = extract(month from end_date) and
+    extract(year from start_date) = extract(year from end_date) and
+    start_station_id != end_station_id;
+    ```
   
-- Question 4:
-  * Answer:
+- Question 4: What's the average and max straight line distance travelled for all riders? 
+  * Answer: The average straight line distance for all riders is 1.53km. The maximum straight line distance is 76.18km.
   * SQL query:
+  ```sql
+  select avg(sqrt(pow((s_lat - e_lat)*110.574,2) + pow((s_lon - e_lon)*111.32,2))) as distance
+    from
+    (select bs.latitude as s_lat, bs.longitude as s_lon,
+    bs2.latitude as e_lat, bs2.longitude as e_lon
+    from `bigquery-public-data`.san_francisco.bikeshare_trips bt
+    inner join `bigquery-public-data`.san_francisco.bikeshare_stations bs
+    on bt.start_station_id = bs.station_id
+    inner join `bigquery-public-data`.san_francisco.bikeshare_stations bs2
+    on bt.end_station_id = bs2.station_id
+    where extract(day from start_date) = extract(day from end_date) and
+    extract(month from start_date) = extract(month from end_date) and
+    extract(year from start_date) = extract(year from end_date) and
+    start_station_id != end_station_id) d;
+  ```
   
-- ...
 
-- Question n:
-  * Answer:
-  * SQL query:
 
 ---
 
